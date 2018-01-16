@@ -28,7 +28,7 @@ module ElasticAPM
 
     attr_accessor :id, :name, :result, :type
     attr_reader :context, :duration, :root_span, :timestamp, :spans,
-      :notifications, :sampled
+      :notifications, :sampled, :instrumenter
 
     def release
       @instrumenter.current_transaction = nil
@@ -64,7 +64,11 @@ module ElasticAPM
     def span(name, type = nil, backtrace: nil, context: nil)
       span = next_span(name, type, context)
       spans << span
-      span.start(backtrace: backtrace)
+
+      span.stacktrace =
+        backtrace && Stacktrace.build(@instrumenter.config, backtrace)
+
+      span.start
 
       return span unless block_given?
 
