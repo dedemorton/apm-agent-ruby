@@ -61,6 +61,7 @@ module ElasticAPM
       spans.select(&:running?)
     end
 
+    # rubocop:disable Metrics/MethodLength
     def span(name, type = nil, backtrace: nil, context: nil)
       span = next_span(name, type, context)
       spans << span
@@ -80,6 +81,7 @@ module ElasticAPM
 
       result
     end
+    # rubocop:enable Metrics/MethodLength
 
     def current_span
       spans.reverse.lazy.find(&:running?)
